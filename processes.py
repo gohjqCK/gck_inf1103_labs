@@ -12,4 +12,10 @@ def process_delivery(current_total, new_value):
     return new_value
 
 def calculate_tax(amount):
+    price = 0.50
+    full_cost = amount * price
+    discount = full_cost * 0.9
+    return discount
+
+def generate_reports(total_units, failed_attempts):
     print("hi")

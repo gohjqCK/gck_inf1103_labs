@@ -2,6 +2,7 @@ import processes
 
 inventory = 0
 total = 0
+price = 0
 while True:
     inventoryI = input("Enter inventory amount: ")
     if processes.get_valid_input(inventoryI).lower() == "quit":
@@ -10,6 +11,9 @@ while True:
     else:
         inventory = int(processes.get_valid_input(inventoryI))
         total = int(processes.process_delivery(inventory, total))
+        price = processes.calculate_tax(inventory)
+        report = processes.generate_reports(total, inventory)
+        
 
 
 
