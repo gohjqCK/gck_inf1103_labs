@@ -7,9 +7,9 @@ def get_valid_input(inventoryI):
         inventoryI = "Please input a valid number"
     return inventoryI
 
-def process_delivery(current_value, total_value):
-    total_value = current_value + total_value
-    return total_value
+def process_delivery(current_total, new_value):
+    new_value += current_total
+    return new_value
 
 def calculate_tax(amount):
     print("hi")

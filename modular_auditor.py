@@ -1,15 +1,17 @@
 import processes
 
 inventory = 0
-total_value = 0
+total = 0
 while True:
     inventoryI = input("Enter inventory amount: ")
     if processes.get_valid_input(inventoryI).lower() == "quit":
         print("Quitting..")
         break
     else:
-        inventory = processes.get_valid_input(inventoryI)
-        processes.process_delivery(inventory, total_value)
+        inventory = int(processes.get_valid_input(inventoryI))
+        total = int(processes.process_delivery(inventory, total))
+
+
 
     # try:
     #     if str(inventory).isdigit() and int(inventoryI) > 0:
