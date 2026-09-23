@@ -1,10 +1,15 @@
 def get_valid_input(inventoryI):
-    if inventoryI.isdigit() and int(inventoryI) > 0:
-        inventoryI = inventoryI
-    elif inventoryI.lower() == "quit":
-        inventoryI = "quit"
-    else:
-        inventoryI = "Please input a valid number"
+    try:
+        if inventoryI.isdigit() and int(inventoryI) > 0:
+            inventoryI = inventoryI
+        elif inventoryI.lower() == "quit":
+            inventoryI = "quit"
+        elif inventoryI.lower() == "report":
+            inventoryI = "report"
+        else:
+            inventoryI = "fail"
+    except ValueError:
+        inventoryI = "fail"
     return inventoryI
 
 def process_delivery(current_total, new_value):
@@ -14,8 +19,9 @@ def process_delivery(current_total, new_value):
 def calculate_tax(amount):
     price = 0.50
     full_cost = amount * price
-    discount = full_cost * 0.9
-    return discount
+    tax = full_cost * 1.1
+    return tax
 
 def generate_reports(total_units, failed_attempts):
-    print("hi")
+    chit = print(str(total_units) + " amount of units total, " + str(failed_attempts) + " times failed during this request")
+    return chit
