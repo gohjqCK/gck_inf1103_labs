@@ -26,17 +26,19 @@ def generate_reports(total_units, failed_attempts):
     chit = print(str(total_units) + " amount of units total, " + str(failed_attempts) + " times failed during this request")
     return chit
 
-file = open("history.txt", 'w')
-orders = ['1001, Wireless Mouse, 2\n',
-        '1002, Keyboard, 1\n',
-        '1003, USB Cable, 3\n']
+file = open("inventory.txt", 'r+')
 
 inventory = 0
 total = 0
 fail = 0
 
 while True:
-    inventoryI = input("Enter inventory amount: ")
+    print("Current Orders:\n")
+    orders = file.read()
+    print(orders)
+
+    Pname = input("Enter Product Name: ")
+    inventoryI = input("Enter Quantity: ")
     if get_valid_input(inventoryI).lower() == "quit":
         print("Quitting..")
         break
