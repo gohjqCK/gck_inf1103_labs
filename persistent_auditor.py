@@ -8,7 +8,7 @@ def get_valid_input(inventoryI):
             inventoryI = "report"
         elif inventoryI.lower() == "load":
             inventoryI = "load"
-        elif inventoryI.lower == "save":
+        elif inventoryI.lower() == "save":
             inventoryI = "save"
         else:
             inventoryI = "fail"
@@ -34,8 +34,12 @@ def load_inventory():
     file.seek(0)
     status = file.readlines()
     print(status)
-    return status
 
+def save_inventory(newlist):
+    file.writelines(newlist)
+    file.seek(0)
+    print("Orders saved.")
+    print(file.readlines())
 
 inventory = 0
 total = 0
@@ -58,6 +62,8 @@ while True:
     elif get_valid_input(inventoryI) == "load":
         print("All orders:")
         load_inventory()
+    elif get_valid_input(inventoryI) == "save":
+        save_inventory(totalOrder)
 
     else:
         quantity = input("Enter Quantity: ")
@@ -67,9 +73,9 @@ while True:
             price = calculate_tax(total)
             #print(str(total) + " amount of units, total price is: $" + str(price))
             print("New order added:")
-            newOrder = [counter + 1001, inventoryI, str(inventory) + "\n"]
+            newOrder = [str(counter + 1001), " " + inventoryI, " " +str(inventory) + "\n"]
             totalOrder += newOrder
-            print(totalOrder)
+            print(','.join(map(str,totalOrder)))
             counter += 1
 
         elif get_valid_input(inventoryI) == "fail":
