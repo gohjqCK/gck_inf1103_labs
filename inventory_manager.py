@@ -14,6 +14,17 @@ def choiceValidator(choice):
         choice = "fail"
         return choice
 
+def load_inventory():
+    try:
+        open('inventory.json', 'r+')
+        print("\ninventory.json found.\nInventory loaded successfully.\n")
+        data = json.load(open('inventory.json', 'r+'))
+        Cinventory.extend(data)
+    except FileNotFoundError:
+        print("\nFile does not exist! Generating a new inventory file.\n")
+        open('inventory.json', 'w+')
+
+
 def display_all():
     for product in Cinventory:
         output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
@@ -77,25 +88,18 @@ def search_product():
     except ValueError:
         return "fail"
 
-Cinventory = [
-    {'ID': 'P001', 'NAME': 'Laptop', 'PRICE': '$1200.00', 'STOCK': 15},
-    {'ID': 'P002', 'NAME': 'Mouse', 'PRICE': '$25.50', 'STOCK': 40},
-    {'ID': 'P003', 'NAME': 'Keyboard', 'PRICE': '$45', 'STOCK': 25}
-]
+def save_inventory(inventory):
+    with open("inventory.json", "w") as file:
+        json.dump(inventory, file)
+    print("Inventory saved successfully.\n")
+
+Cinventory = []
 
 print("==================================")
 print("INVENTORY MANAGEMENT SYSTEM")
 print("==================================")
 
-# try:
-#     file = open('inventory.json', 'w+')
-#     try:
-        
-#     except:
-#         print("Inventory failed to load.")
-#     print("\ninventory.json found.\nInventory loaded successfully.\n")
-# except:
-#     print("Failed to locate inventory.json")
+load_inventory()
 
 print(
     "-----------MENU-----------\n" + 
@@ -148,3 +152,13 @@ while True:
             print("Invalid input. Please try again\n")
         elif search == "exist":
             print("Product not found. Please try again\n")
+
+    if option == 5:
+        save_inventory(Cinventory)
+
+    if option == 6:
+        print("\nSaving inventory before exit...")
+        save_inventory(Cinventory)
+        print("\nInventory saved successfully.\n")
+        print("Thank you for using the Inventory Management System\nProgram Terminated.")
+        break
