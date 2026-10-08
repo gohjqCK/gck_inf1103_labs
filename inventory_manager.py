@@ -14,7 +14,10 @@ def choiceValidator(choice):
         choice = "fail"
         return choice
 
-# def display_all():
+def display_all():
+    for product in Cinventory:
+        output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
+        print(output)
 
 def add_product():
     try:
@@ -113,9 +116,7 @@ while True:
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
-        for product in Cinventory:
-            output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
-            print(output)
+        display_all()
         print("----------------------------------------------------\n")
 
     if option == 2:
