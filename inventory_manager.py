@@ -8,20 +8,20 @@ class product:
             self.stock = stock
     
     def update_stock():
-        if Cinventory == []:
+        if store == []:
             return "empty"
         else:
             id = input("Enter Product ID: ")
             try:
                 selectID = int(id.replace("P", "")) - 1
                 try:
-                    print("\nProduct Found:\nName: " + Cinventory[selectID]["NAME"])
-                    print("Current Stock: " + str(Cinventory[selectID]["STOCK"]))
+                    print("\nProduct Found:\nName: " + store[selectID]["NAME"])
+                    print("Current Stock: " + str(store[selectID]["STOCK"]))
                 except:
                     return "exist"
                 newStock = int(input("\nNew stock quantity: "))         
                 try:
-                    Cinventory[selectID]["STOCK"] = newStock
+                    store[selectID]["STOCK"] = newStock
                 except:
                     return "fail"
             except ValueError:
@@ -33,7 +33,7 @@ class product:
         print(f"Price: ${self.price:.2f}")
         print(f"Stock: {self.stock} units")
 
-class inventory:
+class Inventory:
     def __init__(self):
         self.products = {}
 
@@ -41,7 +41,7 @@ class inventory:
         try:
             itemID = int(input("Product ID: "))
             fullID = f"P{itemID:03d}"
-            if any(item['ID'] == fullID for item in Cinventory):
+            if any(item['ID'] == fullID for item in store):
                     return "exist"  
             itemName = input("Product Name: ")
             itemPrice = float(input("Price: "))
@@ -75,100 +75,109 @@ class inventory:
     def search_product(self, product_id):
         return self.products.get(product_id, None)
 
-    def display_all():
-        for product in Cinventory:
-            output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
-            print(output)
+    def display_all(self):
+        for product in self.products.values():
+            print(f"ID: {product.product_id} | Name: {product.name} | "
+                  f"Price: ${product.price:.2f} | Stock: {product.stock}")
 
-def choiceValidator(choice):
-    try:
-        choice = int(choice)
-        if choice < 1 or choice > 6:
+    @staticmethod
+    def choiceValidator(choice):
+        try:
+            choice = int(choice)
+            if choice < 1 or choice > 6:
+                choice = "fail"
+                return choice
+            else:
+                choice = choice
+                return choice
+
+        except ValueError:
             choice = "fail"
             return choice
-        else:
-            choice = choice
-            return choice
 
-    except ValueError:
-        choice = "fail"
-        return choice
-
-def load_inventory():
-    try:
-        open('inventory.json', 'r+')
-        print("\ninventory.json found.\nInventory loaded successfully.\n")
-        data = json.load(open('inventory.json', 'r+'))
-        Cinventory.extend(data)
-    except FileNotFoundError:
-        print("\nFile does not exist! Generating a new inventory file.\n")
-        open('inventory.json', 'w+')
-
-def search_product():
-    id = input("Enter Product ID: ")
-    try:
-        selectID = int(id.replace("P", "")) - 1
+    def load_inventory(self):
         try:
-            print("\nProduct Found:")
-            print("-----------------------")
-            print("ID: " + str(Cinventory[selectID]["ID"]))
-            print("NAME: " + str(Cinventory[selectID]["NAME"]))
-            print("PRICE: " + str(Cinventory[selectID]["PRICE"]))
-            print("STOCK: " + str(Cinventory[selectID]["STOCK"]))
-            print("-----------------------\n")
+            open('inventory.json', 'r+')
+            print("\ninventory.json found.\nInventory loaded successfully.\n")
+            data = json.load(open('inventory.json', 'r+'))
+            for item in data:
+                self.products[item["ID"]] = product(
+                    item["ID"],
+                    item["NAME"],
+                    float(item["PRICE"].replace("$", "")),
+                    item["STOCK"],
+                )
+        except FileNotFoundError:
+            print("\nFile does not exist! Generating a new inventory file.\n")
+            open('inventory.json', 'w+')
+        except json.JSONDecodeError:
+            print("\nError decoding JSON. Please check the inventory.json file.\n")
 
-        except:
-            return "exist"
-    except ValueError:
-        return "fail"
+    def search_product():
+        id = input("Enter Product ID: ")
+        try:
+            selectID = int(id.replace("P", "")) - 1
+            try:
+                print("\nProduct Found:")
+                print("-----------------------")
+                print("ID: " + str(store[selectID]["ID"]))
+                print("NAME: " + str(store[selectID]["NAME"]))
+                print("PRICE: " + str(store[selectID]["PRICE"]))
+                print("STOCK: " + str(store[selectID]["STOCK"]))
+                print("-----------------------\n")
 
-def save_inventory(inventory):
-    with open("inventory.json", "w") as file:
-        json.dump(inventory, file)
-    print("Inventory saved successfully.\n")
+            except:
+                return "exist"
+        except ValueError:
+            return "fail"
 
-def menu():
-    print(
-    "-----------MENU-----------\n" + 
-    "1. Display all products\n" +
-    "2. Add product\n" +
-    "3. Update Stock\n" +
-    "4. Search Product\n" +
-    "5. Save inventory\n" +
-    "6. Exit\n" +
-    "--------------------------\n"
-    )
+    def save_inventory(inventory):
+        with open("inventory.json", "w") as file:
+            json.dump(inventory, file)
+        print("Inventory saved successfully.\n")
 
-Cinventory = []
+    @staticmethod
+    def menu():
+        print(
+        "-----------MENU-----------\n" + 
+        "1. Display all products\n" +
+        "2. Add product\n" +
+        "3. Update Stock\n" +
+        "4. Search Product\n" +
+        "5. Save inventory\n" +
+        "6. Exit\n" +
+        "--------------------------\n"
+        )
 
 print("==================================")
 print("INVENTORY MANAGEMENT SYSTEM")
 print("==================================")
 
-load_inventory()
+store = Inventory()
+store.load_inventory()
 
 while True:
-    menu()
-    option = choiceValidator(input("Enter Option: "))
+    Inventory.menu()
+    option = Inventory.choiceValidator(input("Enter Option: "))
     if option == "fail":
         print("WARNING: Please input a valid option")
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
-        inventory.display_all()
+        Inventory.display_all(store)
         print("----------------------------------------------------\n")
         input("Press any key to continue...")
 
     if option == 2:
         print("\nAdd New Product")
-        newprod = inventory.add_product()
+        newprod = Inventory.add_product()
         if newprod == "fail":
             print("One or more options invalid. Please try again.")
         elif newprod == "exist":
             print("Item ID already exists. Please try again.")
         else:
             print("\nProduct Added Successfully!\n")
-            Cinventory.append(newprod)
+            store.append(newprod)
             input("Press any key to continue...")
 
     if option == 3:
@@ -186,7 +195,7 @@ while True:
 
     if option == 4:
         print("\nSearch Product")
-        search = search_product()
+        search = Inventory.search_product()
         if search == "fail":
             print("Invalid input. Please try again\n")
         elif search == "exist":
@@ -194,11 +203,11 @@ while True:
             input("Press any key to continue...")
 
     if option == 5:
-        save_inventory(Cinventory)
+        Inventory.save_inventory(store)
 
     if option == 6:
         print("\nSaving inventory before exit...")
-        save_inventory(Cinventory)
+        # Inventory.save_inventory(store)
         print("\nInventory saved successfully.\n")
         print("Thank you for using the Inventory Management System\nProgram Terminated.")
         break
