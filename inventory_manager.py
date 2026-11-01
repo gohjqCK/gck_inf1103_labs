@@ -76,7 +76,7 @@ def load_inventory():
             store.products[item["ID"]] = product(
                 item["ID"],
                 item["NAME"],
-                float(item["PRICE"].replace("$", "")),
+                item["PRICE"],
                 item["STOCK"],
             )
     except FileNotFoundError:
