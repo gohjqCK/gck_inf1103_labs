@@ -86,8 +86,17 @@ def load_inventory():
         print("\nError decoding JSON. Please check the inventory.json file.\n")
 
 def save_inventory(inventory):
+    item = [
+        {
+            "ID": p.product_id,
+            "NAME": p.name,
+            "PRICE": p.price,
+            "STOCK": p.stock
+        }
+        for p in inventory.values()
+    ]
     with open("inventory.json", "w") as file:
-        json.dump(inventory, file)
+        json.dump(item, file)
     print("Inventory saved successfully.\n")
 
 
@@ -146,7 +155,7 @@ while True:
                 input("Press any key to continue...")
             except ValueError:
                 print("Invalid stock quantity. Please try again.\n")
- 
+
 
     if option == 4:
         print("\nSearch Product")
@@ -160,11 +169,11 @@ while True:
             input("Press any key to continue...")
 
     if option == 5:
-        Inventory.save_inventory(store)
+        save_inventory(store.products)
 
     if option == 6:
         print("\nSaving inventory before exit...")
-        # Inventory.save_inventory(store)
+        save_inventory(store.products)
         print("\nInventory saved successfully.\n")
         print("Thank you for using the Inventory Management System\nProgram Terminated.")
         break
