@@ -7,25 +7,8 @@ class product:
             self.price = price
             self.stock = stock
     
-    def update_stock():
-        if store == []:
-            return "empty"
-        else:
-            id = input("Enter Product ID: ")
-            try:
-                selectID = int(id.replace("P", "")) - 1
-                try:
-                    print("\nProduct Found:\nName: " + store[selectID]["NAME"])
-                    print("Current Stock: " + str(store[selectID]["STOCK"]))
-                except:
-                    return "exist"
-                newStock = int(input("\nNew stock quantity: "))         
-                try:
-                    store[selectID]["STOCK"] = newStock
-                except:
-                    return "fail"
-            except ValueError:
-                return "fail"
+    def update_stock(self, itemStock):
+        self.stock = itemStock
 
     def display_information(self):
         print(f"Product ID: {self.product_id}")
@@ -52,23 +35,18 @@ class Inventory:
         self.products[fullID] = product(fullID, itemName, fullPrice, itemStock)   
         return "success"
 
-    def calculate_tax(self, amount):
-        tax_rate = 0.07  # 7% sales tax
-        tax_amount = amount * tax_rate
-        total_with_tax = amount + tax_amount
-        return total_with_tax
-
-    def process_delivery(self, product_id, quantity):
-        product = self.search_product(product_id)
-        if product:
-            product.update_stock(quantity)
-            return product.price * quantity
+    def search_product(self, productID):
+        if productID in self.products:
+            print("\nProduct Found:")
+            print("-----------------------")
+            print(f"ID: {self.products[productID].product_id} | Name: {self.products[productID].name} | "
+                  f"Price: {self.products[productID].price} | Stock: {self.products[productID].stock}")
+            print("-----------------------\n")
+        elif productID not in self.products:
+            return "exist"
         else:
-            print("Product not found.")
-            return 0
-        
-    def search_product(self, product_id):
-        return self.products.get(product_id, None)
+            return "fail"
+        return None
 
     def display_all(self):
         for product in self.products.values():
@@ -106,24 +84,6 @@ def load_inventory():
         open('inventory.json', 'w+')
     except json.JSONDecodeError:
         print("\nError decoding JSON. Please check the inventory.json file.\n")
-
-def search_product():
-    id = input("Enter Product ID: ")
-    try:
-        selectID = int(id.replace("P", "")) - 1
-        try:
-            print("\nProduct Found:")
-            print("-----------------------")
-            print("ID: " + str(store[selectID]["ID"]))
-            print("NAME: " + str(store[selectID]["NAME"]))
-            print("PRICE: " + str(store[selectID]["PRICE"]))
-            print("STOCK: " + str(store[selectID]["STOCK"]))
-            print("-----------------------\n")
-
-        except:
-            return "exist"
-    except ValueError:
-        return "fail"
 
 def save_inventory(inventory):
     with open("inventory.json", "w") as file:
@@ -175,20 +135,24 @@ while True:
 
     if option == 3:
         print("\nUpdate Stock")
-        upd = product.update_stock()
-        if upd == "empty":
-            print("\nNo products in stock\n")
-        elif upd == "fail":
-            print("\nInvalid input. Please try again.\n")
-        elif upd == "exist":
-            print("\nSpecified ID does not exist. Please try again.\n")
-        else:
-            print("\nStock Updated Successfully!\n")
-            input("Press any key to continue...")
+        productID = input("Enter Product ID: ")
+        fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+        item = store.search_product(fullID)
+        if item is None:
+            try:
+                newStock = int(input("Enter new stock quantity: "))
+                store.products[fullID].update_stock(newStock)
+                print("\nStock updated successfully!\n")
+                input("Press any key to continue...")
+            except ValueError:
+                print("Invalid stock quantity. Please try again.\n")
+ 
 
     if option == 4:
         print("\nSearch Product")
-        search = Inventory.search_product()
+        inputID = input("Enter Product ID: ")
+        productID = f"P{int(inputID.upper().replace('P', '')):03d}"
+        search = Inventory.search_product(store, productID)
         if search == "fail":
             print("Invalid input. Please try again\n")
         elif search == "exist":
