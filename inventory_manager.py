@@ -7,8 +7,25 @@ class product:
             self.price = price
             self.stock = stock
     
-    def update_stock(self, quantity):
-        self.stock += quantity
+    def update_stock():
+        if Cinventory == []:
+            return "empty"
+        else:
+            id = input("Enter Product ID: ")
+            try:
+                selectID = int(id.replace("P", "")) - 1
+                try:
+                    print("\nProduct Found:\nName: " + Cinventory[selectID]["NAME"])
+                    print("Current Stock: " + str(Cinventory[selectID]["STOCK"]))
+                except:
+                    return "exist"
+                newStock = int(input("\nNew stock quantity: "))         
+                try:
+                    Cinventory[selectID]["STOCK"] = newStock
+                except:
+                    return "fail"
+            except ValueError:
+                return "fail"
 
     def display_information(self):
         print(f"Product ID: {self.product_id}")
@@ -20,8 +37,25 @@ class inventory:
     def __init__(self):
         self.products = {}
 
-    def add_product(self, product):
-        self.products[product.product_id] = product
+    def add_product():
+        try:
+            itemID = int(input("Product ID: "))
+            fullID = f"P{itemID:03d}"
+            if any(item['ID'] == fullID for item in Cinventory):
+                    return "exist"  
+            itemName = input("Product Name: ")
+            itemPrice = float(input("Price: "))
+            itemStock = int(input("Stock Quantity: "))
+        except ValueError:
+            return "fail"
+        fullPrice = f"${itemPrice:.2f}"     
+        item = {
+            "ID" : fullID, 
+            "NAME" : itemName, 
+            "PRICE" : fullPrice, 
+            "STOCK" : itemStock
+            }
+        return item
 
     def calculate_tax(self, amount):
         tax_rate = 0.07  # 7% sales tax
@@ -41,10 +75,10 @@ class inventory:
     def search_product(self, product_id):
         return self.products.get(product_id, None)
 
-    def display_all(self):
-        for product in self.products.values():
-            product.display_information()
-            print("-" * 20)
+    def display_all():
+        for product in Cinventory:
+            output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
+            print(output)
 
 def choiceValidator(choice):
     try:
@@ -70,52 +104,6 @@ def load_inventory():
         print("\nFile does not exist! Generating a new inventory file.\n")
         open('inventory.json', 'w+')
 
-
-def display_all():
-    for product in Cinventory:
-        output = f"ID: {product['ID']} | Name: {product['NAME']} | Price: {product['PRICE']} | Stock: {product['STOCK']}"
-        print(output)
-
-def add_product():
-    try:
-        itemID = int(input("Product ID: "))
-        fullID = f"P{itemID:03d}"
-        if any(item['ID'] == fullID for item in Cinventory):
-                return "exist"  
-        itemName = input("Product Name: ")
-        itemPrice = float(input("Price: "))
-        itemStock = int(input("Stock Quantity: "))
-    except ValueError:
-        return "fail"
-    fullPrice = f"${itemPrice:.2f}"     
-    item = {
-        "ID" : fullID, 
-        "NAME" : itemName, 
-        "PRICE" : fullPrice, 
-        "STOCK" : itemStock
-        }
-    return item
-        
-def update_stock():
-    if Cinventory == []:
-        return "empty"
-    else:
-        id = input("Enter Product ID: ")
-        try:
-            selectID = int(id.replace("P", "")) - 1
-            try:
-                print("\nProduct Found:\nName: " + Cinventory[selectID]["NAME"])
-                print("Current Stock: " + str(Cinventory[selectID]["STOCK"]))
-            except:
-                return "exist"
-            newStock = int(input("\nNew stock quantity: "))         
-            try:
-                Cinventory[selectID]["STOCK"] = newStock
-            except:
-                return "fail"
-        except ValueError:
-            return "fail"
-
 def search_product():
     id = input("Enter Product ID: ")
     try:
@@ -139,15 +127,8 @@ def save_inventory(inventory):
         json.dump(inventory, file)
     print("Inventory saved successfully.\n")
 
-Cinventory = []
-
-print("==================================")
-print("INVENTORY MANAGEMENT SYSTEM")
-print("==================================")
-
-load_inventory()
-
-print(
+def menu():
+    print(
     "-----------MENU-----------\n" + 
     "1. Display all products\n" +
     "2. Add product\n" +
@@ -158,20 +139,29 @@ print(
     "--------------------------\n"
     )
 
-while True:
+Cinventory = []
 
+print("==================================")
+print("INVENTORY MANAGEMENT SYSTEM")
+print("==================================")
+
+load_inventory()
+
+while True:
+    menu()
     option = choiceValidator(input("Enter Option: "))
     if option == "fail":
         print("WARNING: Please input a valid option")
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
-        display_all()
+        inventory.display_all()
         print("----------------------------------------------------\n")
+        input("Press any key to continue...")
 
     if option == 2:
         print("\nAdd New Product")
-        newprod = add_product()
+        newprod = inventory.add_product()
         if newprod == "fail":
             print("One or more options invalid. Please try again.")
         elif newprod == "exist":
@@ -179,9 +169,11 @@ while True:
         else:
             print("\nProduct Added Successfully!\n")
             Cinventory.append(newprod)
+            input("Press any key to continue...")
+
     if option == 3:
         print("\nUpdate Stock")
-        upd = update_stock()
+        upd = product.update_stock()
         if upd == "empty":
             print("\nNo products in stock\n")
         elif upd == "fail":
@@ -190,6 +182,7 @@ while True:
             print("\nSpecified ID does not exist. Please try again.\n")
         else:
             print("\nStock Updated Successfully!\n")
+            input("Press any key to continue...")
 
     if option == 4:
         print("\nSearch Product")
@@ -198,6 +191,7 @@ while True:
             print("Invalid input. Please try again\n")
         elif search == "exist":
             print("Product not found. Please try again\n")
+            input("Press any key to continue...")
 
     if option == 5:
         save_inventory(Cinventory)
