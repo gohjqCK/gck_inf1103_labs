@@ -30,32 +30,27 @@ class product:
     def display_information(self):
         print(f"Product ID: {self.product_id}")
         print(f"Name: {self.name}")
-        print(f"Price: ${self.price:.2f}")
+        print(f"Price: ${self.price}")
         print(f"Stock: {self.stock} units")
 
 class Inventory:
     def __init__(self):
         self.products = {}
 
-    def add_product():
+    def add_product(self):
         try:
             itemID = int(input("Product ID: "))
             fullID = f"P{itemID:03d}"
-            if any(item['ID'] == fullID for item in store):
+            if fullID in self.products:
                     return "exist"  
             itemName = input("Product Name: ")
             itemPrice = float(input("Price: "))
             itemStock = int(input("Stock Quantity: "))
         except ValueError:
             return "fail"
-        fullPrice = f"${itemPrice:.2f}"     
-        item = {
-            "ID" : fullID, 
-            "NAME" : itemName, 
-            "PRICE" : fullPrice, 
-            "STOCK" : itemStock
-            }
-        return item
+        fullPrice = f"${itemPrice:.2f}"  
+        self.products[fullID] = product(fullID, itemName, fullPrice, itemStock)   
+        return "success"
 
     def calculate_tax(self, amount):
         tax_rate = 0.07  # 7% sales tax
@@ -78,87 +73,86 @@ class Inventory:
     def display_all(self):
         for product in self.products.values():
             print(f"ID: {product.product_id} | Name: {product.name} | "
-                  f"Price: ${product.price:.2f} | Stock: {product.stock}")
-
-    @staticmethod
-    def choiceValidator(choice):
-        try:
-            choice = int(choice)
-            if choice < 1 or choice > 6:
-                choice = "fail"
-                return choice
-            else:
-                choice = choice
-                return choice
-
-        except ValueError:
+                  f"Price: {product.price} | Stock: {product.stock}")
+            
+def choiceValidator(choice):
+    try:
+        choice = int(choice)
+        if choice < 1 or choice > 6:
             choice = "fail"
             return choice
+        else:
+            choice = choice
+            return choice
 
-    def load_inventory(self):
+    except ValueError:
+        choice = "fail"
+        return choice
+
+def load_inventory():
+    try:
+        open('inventory.json', 'r+')
+        print("\ninventory.json found.\nInventory loaded successfully.\n")
+        data = json.load(open('inventory.json', 'r+'))
+        for item in data:
+            store.products[item["ID"]] = product(
+                item["ID"],
+                item["NAME"],
+                float(item["PRICE"].replace("$", "")),
+                item["STOCK"],
+            )
+    except FileNotFoundError:
+        print("\nFile does not exist! Generating a new inventory file.\n")
+        open('inventory.json', 'w+')
+    except json.JSONDecodeError:
+        print("\nError decoding JSON. Please check the inventory.json file.\n")
+
+def search_product():
+    id = input("Enter Product ID: ")
+    try:
+        selectID = int(id.replace("P", "")) - 1
         try:
-            open('inventory.json', 'r+')
-            print("\ninventory.json found.\nInventory loaded successfully.\n")
-            data = json.load(open('inventory.json', 'r+'))
-            for item in data:
-                self.products[item["ID"]] = product(
-                    item["ID"],
-                    item["NAME"],
-                    float(item["PRICE"].replace("$", "")),
-                    item["STOCK"],
-                )
-        except FileNotFoundError:
-            print("\nFile does not exist! Generating a new inventory file.\n")
-            open('inventory.json', 'w+')
-        except json.JSONDecodeError:
-            print("\nError decoding JSON. Please check the inventory.json file.\n")
+            print("\nProduct Found:")
+            print("-----------------------")
+            print("ID: " + str(store[selectID]["ID"]))
+            print("NAME: " + str(store[selectID]["NAME"]))
+            print("PRICE: " + str(store[selectID]["PRICE"]))
+            print("STOCK: " + str(store[selectID]["STOCK"]))
+            print("-----------------------\n")
 
-    def search_product():
-        id = input("Enter Product ID: ")
-        try:
-            selectID = int(id.replace("P", "")) - 1
-            try:
-                print("\nProduct Found:")
-                print("-----------------------")
-                print("ID: " + str(store[selectID]["ID"]))
-                print("NAME: " + str(store[selectID]["NAME"]))
-                print("PRICE: " + str(store[selectID]["PRICE"]))
-                print("STOCK: " + str(store[selectID]["STOCK"]))
-                print("-----------------------\n")
+        except:
+            return "exist"
+    except ValueError:
+        return "fail"
 
-            except:
-                return "exist"
-        except ValueError:
-            return "fail"
+def save_inventory(inventory):
+    with open("inventory.json", "w") as file:
+        json.dump(inventory, file)
+    print("Inventory saved successfully.\n")
 
-    def save_inventory(inventory):
-        with open("inventory.json", "w") as file:
-            json.dump(inventory, file)
-        print("Inventory saved successfully.\n")
 
-    @staticmethod
-    def menu():
-        print(
-        "-----------MENU-----------\n" + 
-        "1. Display all products\n" +
-        "2. Add product\n" +
-        "3. Update Stock\n" +
-        "4. Search Product\n" +
-        "5. Save inventory\n" +
-        "6. Exit\n" +
-        "--------------------------\n"
-        )
+def menu():
+    print(
+    "-----------MENU-----------\n" + 
+    "1. Display all products\n" +
+    "2. Add product\n" +
+    "3. Update Stock\n" +
+    "4. Search Product\n" +
+    "5. Save inventory\n" +
+    "6. Exit\n" +
+    "--------------------------\n"
+    )
 
 print("==================================")
 print("INVENTORY MANAGEMENT SYSTEM")
 print("==================================")
 
 store = Inventory()
-store.load_inventory()
+load_inventory()
 
 while True:
-    Inventory.menu()
-    option = Inventory.choiceValidator(input("Enter Option: "))
+    menu()
+    option = choiceValidator(input("Enter Option: "))
     if option == "fail":
         print("WARNING: Please input a valid option")
     if option == 1:
@@ -170,14 +164,13 @@ while True:
 
     if option == 2:
         print("\nAdd New Product")
-        newprod = Inventory.add_product()
+        newprod = Inventory.add_product(store)
         if newprod == "fail":
             print("One or more options invalid. Please try again.")
         elif newprod == "exist":
             print("Item ID already exists. Please try again.")
-        else:
+        elif newprod == "success":
             print("\nProduct Added Successfully!\n")
-            store.append(newprod)
             input("Press any key to continue...")
 
     if option == 3:
