@@ -64,7 +64,14 @@ while True:
         print("----------------------------------------------------")
         Inventory.display_information(store)
         print("----------------------------------------------------\n")
-        input("Press any key to continue...")
+        shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
+        if shipInfo == "1":
+            for product in store.products.values():
+                if isinstance(product, PhysicalProduct):
+                    print(f"Product ID: {product.product_id} | Name: {product.name} | Fulfillment Info: {product.get_fulfillment_info()}")
+                    print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+            print("----------------------------------------------------\n")
+            input("Press any key to continue...")
 
     if option == 2:
         print("\nAdd New Product")
