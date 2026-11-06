@@ -1,7 +1,7 @@
 import json
-from Modules import Product
-from Modules import Inventory
-from Modules import Menu
+from Modules.Product import Product
+from Modules.Inventory import Inventory
+from Modules.Menu import Menu
 
 def load_inventory():
     try:
@@ -9,7 +9,7 @@ def load_inventory():
         print("\ninventory.json found.\nInventory loaded successfully.\n")
         data = json.load(open('inventory.json', 'r+'))
         for item in data:
-            store.Product[item["ID"]] = Product(
+            store.products[item["ID"]] = Product(
                 item["ID"],
                 item["NAME"],
                 item["PRICE"],
@@ -35,7 +35,7 @@ def save_inventory(inventory):
         json.dump(item, file)
     print("Inventory saved successfully.\n")
 
-store = Inventory
+store = Inventory()
 load_inventory()
 
 while True:

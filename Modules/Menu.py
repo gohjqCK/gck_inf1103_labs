@@ -9,18 +9,22 @@ class Menu:
             "Exit"
         ]
 
-    def main_menu(self):
+    def main_menu():
         print("-----------MENU-----------")
-        for i, option in enumerate(self.options, start=1):
-            print(f"{i}. {option}")
+        print("1. Display all products")
+        print("2. Add product")
+        print("3. Update Stock")
+        print("4. Search Product")
+        print("5. Save inventory")
+        print("6. Exit")
         print("--------------------------")
 
-    def banner(self):
+    def banner():
         print("==================================")
         print("INVENTORY MANAGEMENT SYSTEM")
         print("==================================")
 
-    def choiceValidator(self, choice):
+    def choiceValidator(choice):
         try:
             choice = int(choice)
             if choice < 1 or choice > 6:
