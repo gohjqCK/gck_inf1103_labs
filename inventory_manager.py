@@ -1,5 +1,6 @@
 import json
-from Modules.Product import Product
+from Modules.DigitalProduct import DigitalProduct
+from Modules.PhysicalProduct import PhysicalProduct
 from Modules.Inventory import Inventory
 from Modules.Menu import Menu
 
@@ -9,11 +10,23 @@ def load_inventory():
         print("\ninventory.json found.\nInventory loaded successfully.\n")
         data = json.load(open('inventory.json', 'r+'))
         for item in data:
-            store.products[item["ID"]] = Product(
-                item["ID"],
-                item["NAME"],
-                item["PRICE"],
-                item["STOCK"],
+            if item["TYPE"] == "physical":
+                store.products[item["ID"]] = PhysicalProduct(
+                    item["ID"],
+                    item["NAME"],
+                    item["PRICE"],
+                    item["STOCK"],
+                    item["TYPE"],
+                    item["OTHER"]
+                )
+            else:
+                store.products[item["ID"]] = DigitalProduct(
+                    item["ID"],
+                    item["NAME"],
+                    item["PRICE"],
+                    item["STOCK"],
+                    item["TYPE"],
+                    item["OTHER"]
             )
     except FileNotFoundError:
         print("\nFile does not exist! Generating a new inventory file.\n")
@@ -27,7 +40,9 @@ def save_inventory(inventory):
             "ID": p.product_id,
             "NAME": p.name,
             "PRICE": p.price,
-            "STOCK": p.stock
+            "STOCK": p.stock,
+            "TYPE": p.itemType,
+            "OTHER": p.weight if isinstance(p, PhysicalProduct) else p.download_size
         }
         for p in inventory.values()
     ]
@@ -47,7 +62,7 @@ while True:
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
-        Inventory.display_all(store)
+        Inventory.display_information(store)
         print("----------------------------------------------------\n")
         input("Press any key to continue...")
 

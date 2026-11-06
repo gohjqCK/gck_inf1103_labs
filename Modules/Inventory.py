@@ -1,4 +1,5 @@
-import Modules.Product as Product
+from Modules.DigitalProduct import DigitalProduct
+from Modules.PhysicalProduct import PhysicalProduct
 
 class Inventory:
     def __init__(self):
@@ -13,10 +14,18 @@ class Inventory:
             itemName = input("Product Name: ")
             itemPrice = float(input("Price: "))
             itemStock = int(input("Stock Quantity: "))
+            itemType = input("Product Type (Physical/Digital): ").strip().lower()
+            if itemType == "physical":
+                itemWeight = float(input("Weight in Kgs: "))
+            elif itemType == "digital":
+                itemDownloadSize = float(input("Download Size in MB: "))
         except ValueError:
             return "fail"
         fullPrice = f"${itemPrice:.2f}"  
-        self.products[fullID] = Product.Product(fullID, itemName, fullPrice, itemStock)   
+        if itemType == "physical":
+            self.products[fullID] = PhysicalProduct(fullID, itemName, fullPrice, itemStock, itemType, itemWeight)
+        elif itemType == "digital":
+            self.products[fullID] = DigitalProduct(fullID, itemName, fullPrice, itemStock, itemType, itemDownloadSize)
         return "success"
 
     def search_product(self, productID):
@@ -32,7 +41,6 @@ class Inventory:
             return "fail"
         return None
 
-    def display_all(self):
+    def display_information(self):
         for product in self.products.values():
-            print(f"ID: {product.product_id} | Name: {product.name} | "
-                  f"Price: {product.price} | Stock: {product.stock}")
+            product.display_information()
