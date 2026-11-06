@@ -1,14 +1,4 @@
 class Menu:
-    def __init__(self):
-        self.options = [
-            "Display all products",
-            "Add product",
-            "Update Stock",
-            "Search Product",
-            "Save inventory",
-            "Exit"
-        ]
-
     def main_menu():
         print("-----------MENU-----------")
         print("1. Display all products")
