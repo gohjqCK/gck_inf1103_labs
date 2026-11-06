@@ -42,7 +42,7 @@ def save_inventory(inventory):
             "PRICE": p.price,
             "STOCK": p.stock,
             "TYPE": p.itemType,
-            "OTHER": p.weight if isinstance(p, PhysicalProduct) else p.download_size
+            "OTHER": p.other_info
         }
         for p in inventory.values()
     ]
@@ -67,7 +67,7 @@ while True:
         shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
         if shipInfo == "1":
             for product in store.products.values():
-                if isinstance(product, PhysicalProduct):
+                if product.get_fulfillment_info() == "physical":
                     print(f"Product ID: {product.product_id} | Name: {product.name} | Fulfillment Info: {product.get_fulfillment_info()}")
                     print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
             print("----------------------------------------------------\n")
