@@ -1,8 +1,8 @@
 from Modules.Product import Product
 
 class DigitalProduct(Product):
-    def __init__(self, product_id, name, price, stock, itemType, other_info):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id, name, price, stock, supplier, itemType, other_info):
+        super().__init__(product_id, name, price, stock, supplier)
         self.itemType = itemType
         self.other_info = other_info
 

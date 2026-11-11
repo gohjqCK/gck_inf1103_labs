@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 
 class Product(ABC):
-    def __init__(self, product_id, name, price, stock):
+    def __init__(self, product_id, name, price, stock, supplier):
             self.product_id = product_id
             self.name = name
             self.price = price
             self.stock = stock
+            self.supplier = supplier
         
     def update_stock(self, itemStock):
         self.stock = itemStock

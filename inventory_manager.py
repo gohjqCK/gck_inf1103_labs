@@ -85,6 +85,18 @@ while True:
             input("Press any key to continue...")
 
     if option == 3:
+        print("\nRemove Product")
+        productID = input("Enter Product ID: ")
+        fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+        remove = Inventory.remove_product(store, fullID)
+        if remove == "fail":
+            print("Product not found. Please try again.\n")
+            input("Press any key to continue...")
+        elif remove == "success":
+            print("\nProduct removed successfully!\n")
+            input("Press any key to continue...")
+
+    if option == 4:
         print("\nUpdate Stock")
         productID = input("Enter Product ID: ")
         fullID = f"P{int(productID.upper().replace('P', '')):03d}"
@@ -99,7 +111,7 @@ while True:
                 print("Invalid stock quantity. Please try again.\n")
 
 
-    if option == 4:
+    if option == 5:
         print("\nSearch Product")
         inputID = input("Enter Product ID: ")
         productID = f"P{int(inputID.upper().replace('P', '')):03d}"
@@ -110,10 +122,10 @@ while True:
             print("Product not found. Please try again\n")
             input("Press any key to continue...")
 
-    if option == 5:
+    if option == 6:
         save_inventory(store.products)
 
-    if option == 6:
+    if option == 7:
         print("\nSaving inventory before exit...")
         save_inventory(store.products)
         print("\nInventory saved successfully.\n")

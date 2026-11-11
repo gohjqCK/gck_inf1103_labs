@@ -1,9 +1,10 @@
 from Modules.DigitalProduct import DigitalProduct
 from Modules.PhysicalProduct import PhysicalProduct
+from Modules.Product import Product
 
 class Inventory:
     def __init__(self):
-        self.products = {}
+        self.products: list[Product] = []
 
     def add_product(self):
         try:
@@ -27,6 +28,13 @@ class Inventory:
         elif itemType == "digital":
             self.products[fullID] = DigitalProduct(fullID, itemName, fullPrice, itemStock, itemType, itemDownloadSize)
         return "success"
+
+    def remove_product(self, productID):
+        if productID in self.products:
+            del self.products[productID]
+            return "success"
+        else:
+            return "fail"
 
     def search_product(self, productID):
         if productID in self.products:
