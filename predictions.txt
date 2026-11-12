@@ -1,0 +1,27 @@
+prediction 1 (2.2):
+each product should still be able to display supplier info even after supplier is deleted.
+test 1:
+My prediction matches, even when supplier var is deleted, product can still display supplier information
+
+prediction 2 (3.2):
+the product should still be able to work, even if its removed from the lists inventory A and B it is still instantiated as a product
+test 2:
+when i remove the product from inventories A and B, i still can use display_information(), and it shows the product and its attributes.
+
+prediction 3 (4.3):
+when i add the same product to two different orders, i.e 2 different products with 2 different order IDs, it should be 2 different OrderLine objects existing separately within Order, split by the ID, so removing an orderline from one Order should not remove another orderline of the same product from another Order.
+test 3:
+my prediction was correct, since they were separated by different ids, removing one product from an Order does not remove it from another Order.
+
+diagnosis 1 (6.3):
+the digitalproduct method violates LSP. If the update_stock def already exists within the Product class, it should not exist within the digital product class. A subclass should be usable wherever objectsof the parent class are expected. If it were up to me, i would remove it from product class and add it to physical product.
+
+prediction 4 (7.2):
+using the code, it should print out its specified information (type, then weight for physical and size in megabytes for digital), followed by how it is handled
+test 4:
+my prediction was correct, the products were handled in their specified ways.
+
+explanation 1 (7.4):
+both physical types and digital types of product can be interfaced with Product smoothly via display_information and get_fulfillment_info, letting them be a substitute for a base for Product.
+
+
