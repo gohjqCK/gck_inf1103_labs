@@ -128,7 +128,7 @@ while True:
         except ValueError:
             print("Invalid input, please input a valid number")
             continue
-        remove = store.remove_product(store, fullID)
+        remove = store.remove_product(fullID)
         if remove == "fail":
             print("Product not found. Please try again.\n")
             input("Press any key to continue...")
