@@ -8,7 +8,7 @@ from Modules.Supplier import Supplier
 from Modules.Order import Order
 from Modules.Orderline import Orderline
 
-def load_inventory():
+def load_inventory() -> None:
     try:
         open('inventory.json', 'r+')
         print("\ninventory.json found.\nInventory loaded successfully.\n")
@@ -53,7 +53,7 @@ def load_inventory():
     except json.JSONDecodeError:
         print("\nError decoding JSON. Please check the inventory.json file.\n")
 
-def save_inventory(inventory):
+def save_inventory(inventory) -> None:
     item = [
         {
             "ID": p.product_id,

@@ -11,5 +11,5 @@ class DigitalProduct(Product):
         super().display_information()
         print(f" | Type: {self.itemType} | Size: {self.other_info} MB")
 
-    def get_fulfillment_info(self):
+    def get_fulfillment_info(self) -> str:
         return "digital"

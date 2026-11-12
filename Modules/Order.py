@@ -10,7 +10,7 @@ class Order:
         order_line = Orderline(product, quantity)
         self.order_lines.append(order_line)
 
-    def remove_order_line(self, product_id):
+    def remove_order_line(self, product_id : str) -> str:
         for line in self.order_lines:
             if line.product.product_id == product_id:
                 self.order_lines.remove(line)

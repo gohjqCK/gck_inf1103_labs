@@ -15,6 +15,6 @@ class PhysicalProduct(Product, CanBeShipped):
     def get_fulfillment_info(self):
         return "physical"
 
-    def calculate_shipping_cost(self):
+    def calculate_shipping_cost(self) -> float:
         cost_per_kg = 2.0
         return self.other_info * cost_per_kg

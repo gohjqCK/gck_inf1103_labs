@@ -7,7 +7,7 @@ class Inventory:
     def add_product(self, product: Product) -> None:
         self.products.append(product)
 
-    def remove_product(self, fullID : str) -> Product | None:
+    def remove_product(self, fullID : str) -> str:
         product = self.find_product(fullID)
         if product is None:
             return "fail"
@@ -20,7 +20,7 @@ class Inventory:
                 return product
         return None
 
-    def search_product(self, fullID, type):
+    def search_product(self, fullID, type : str) -> str:
         product = self.find_product(fullID)
         if product is None:
             return "fail"

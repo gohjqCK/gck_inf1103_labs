@@ -1,5 +1,6 @@
 class Menu:
-    def main_menu():
+    @staticmethod
+    def main_menu() -> None:
         print("-----------MENU-----------")
         print("1. Display all products")
         print("2. Add product")
@@ -11,12 +12,13 @@ class Menu:
         print("8. Exit")
         print("--------------------------")
 
-    def banner():
+    @staticmethod
+    def banner() -> None:
         print("==================================")
         print("INVENTORY MANAGEMENT SYSTEM")
         print("==================================")
 
-    def choiceValidator(choice):
+    def choiceValidator(choice : int) -> int:
         try:
             choice = int(choice)
             if choice < 1 or choice > 8:

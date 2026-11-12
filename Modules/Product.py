@@ -8,10 +8,10 @@ class Product(ABC):
             self.stock = stock
             self.supplier = supplier
         
-    def update_stock(self, itemStock):
+    def update_stock(self, itemStock: int) -> None:
         self.stock = itemStock
 
-    def display_information(self):
+    def display_information(self) -> None:
         print(f"Product ID: {self.product_id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} units", end="")
 
     @abstractmethod
