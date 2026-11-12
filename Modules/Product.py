@@ -12,7 +12,7 @@ class Product(ABC):
         self.stock = itemStock
 
     def display_information(self):
-        print(f"Product ID: {self.product_id} | Name: {self.name} | Price: {self.price} | Stock: {self.stock} units", end="")
+        print(f"Product ID: {self.product_id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} units", end="")
 
     @abstractmethod
     def get_fulfillment_info(self):

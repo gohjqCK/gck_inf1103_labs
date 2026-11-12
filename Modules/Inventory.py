@@ -12,8 +12,7 @@ class Inventory:
         if product is None:
             return "fail"
         self.products.remove(product)
-        return "success"
-        
+        return "success" 
 
     def find_product(self, fullID : str) -> Product | None:
         for product in self.products:
@@ -41,8 +40,7 @@ class Inventory:
             print(f"Supplier Name: {product.supplier.name}")
             print(f"Supplier Email: {product.supplier.contact_email}")
             print("==========================\n")
-        return "success"
-        
+        return "success" 
 
     def display_information(self) -> None:
         for product in self.products:

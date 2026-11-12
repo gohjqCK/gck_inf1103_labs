@@ -19,7 +19,7 @@ def load_inventory():
                 product = PhysicalProduct(
                     product_id=item["ID"],
                     name=item["NAME"],
-                    price=item["PRICE"],
+                    price=float(str(item["PRICE"]).replace("$", "")),
                     stock=item["STOCK"],
                     itemType=item["TYPE"],
                     other_info=item["OTHER"],
@@ -35,7 +35,7 @@ def load_inventory():
                 product = DigitalProduct(
                     product_id=item["ID"],
                     name=item["NAME"],
-                    price=item["PRICE"],
+                    price=float(str(item["PRICE"]).replace("$", "")),
                     stock=item["STOCK"],
                     itemType=item["TYPE"],
                     other_info=item["OTHER"],
@@ -70,9 +70,10 @@ def save_inventory(inventory):
     ]
     with open("inventory.json", "w") as file:
         json.dump(item, file)
-    print("Inventory saved successfully.\n")
+    print("\nInventory saved successfully.\n")
 
 store = Inventory()
+orders = {}
 load_inventory()
 
 while True:
@@ -81,25 +82,18 @@ while True:
     option = Menu.choiceValidator(input("Enter Option: "))
     if option == "fail":
         print("WARNING: Please input a valid option")
+
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
         store.display_information()
         print("----------------------------------------------------\n")
-        # shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
-        # if shipInfo == "1":
-        #     for product in store.products.values():
-        #         if product.get_fulfillment_info() == "physical":
-        #             print(f"Product ID: {product.product_id} | Name: {product.name} | Fulfillment Info: {product.get_fulfillment_info()}")
-        #             print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
-        #     print("----------------------------------------------------\n")
-        #     input("Press any key to continue...")
 
     if option == 2:
         print("\nAdd New Product")
         try:
-            itemID = int(input("Product ID: "))
-            fullID = f"P{itemID:03d}"
+            productID = input("Product ID: ")
+            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
             if any(product.product_id == fullID for product in store.products):
                 input("Item already exists. Please try again...\n")
                 continue
@@ -115,13 +109,12 @@ while True:
             supplyName = input("Supplier Name: ")
             supplyEmail = input("Supplier Contact Email: ")
             supplier = Supplier(supplyID, supplyName, supplyEmail)
-            fullPrice = f"${itemPrice:.2f}"  
             if itemType == "physical":
-                product = PhysicalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemWeight)
+                product = PhysicalProduct(fullID, itemName, itemPrice, itemStock, supplier, itemType, itemWeight)
                 store.add_product(product)
                 input("\nSuccessfully added product! Press any key to continue...\n")
             elif itemType == "digital":
-                product = DigitalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemDownloadSize)
+                product = DigitalProduct(fullID, itemName, itemPrice, itemStock, supplier, itemType, itemDownloadSize)
                 store.add_product(product)
                 input("\nSuccessfully added product! Press any key to continue.\n")
         except ValueError:
@@ -130,8 +123,8 @@ while True:
     if option == 3:
         print("\nRemove Product")
         try:
-            itemID = int(input("Enter Product ID: "))
-            fullID = f"P{itemID:03d}"
+            productID = input("Enter Product ID: ")
+            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
         except ValueError:
             print("Invalid input, please input a valid number")
             continue
@@ -146,10 +139,11 @@ while True:
     if option == 4:
         print("\nUpdate Stock")
         try:
-            productID = int(input("Enter Product ID: "))
-            fullID = f"P{productID:03d}"
+            productID = input("Enter Product ID: ")
+            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
             item = store.search_product(fullID, "upd")
             try:
+                product = store.find_product(fullID)
                 newStock = int(input("Enter new stock quantity: "))
                 product.update_stock(newStock)
                 print("\nStock updated successfully!\n")
@@ -163,8 +157,8 @@ while True:
     if option == 5:
         print("\nSearch Product")
         try:
-            inputID = int(input("Enter Product ID: "))
-            fullID = f"P{inputID:03d}"
+            productID = input("Enter Product ID: ")
+            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
         except ValueError:
             print("Invalid input, please input a valid number\n")
             continue
@@ -173,29 +167,82 @@ while True:
             print("Product not found or Invalid ID. Please try again\n")
 
     if option == 6:
-        print("\nAdd Order")
-        print("==================================")
-        while True:
-            orderID = Order(input("\nEnter Order ID: "))
-            productID = int(input("Enter Product ID: "))
-            quantity = input("Enter Quantity: ")
-            fullID = f"P{productID:03d}"
+        print("--------------------------\n1. Add Order\n2. Remove Order\n3. View Orders\n4. Exit to main menu")
+        try:
+            choice = int(input("Enter Option: "))
+        except ValueError:
+            print("WARNING: Please put a valid option")
+        print("--------------------------")
+
+        if choice == 1:
+            print("\nAdd Order")
+            orderID = input("Enter Order ID: ")
+            if orderID in orders:
+                order = orders[orderID]
+            else:
+                order = Order(orderID)
+                orders[orderID] = order
             try:
-                quantity = int(quantity)
-                orderID.add_order_line(fullID, quantity)
-                print("\nOrder successfully added!")
+                productID = input("Enter Product ID: ")
+                fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+            except ValueError:
+                print("Invalid number, please try again.")
+                continue
+            product = store.find_product(fullID)
+            if product is None:
+                print("Product does not exist, please try again.")
+                continue
+            try:
+                quantity = int(input("Enter Quantity: "))
             except ValueError:
                 print("Invalid input, please try again")
-            choice = input("\nPress any key to add another product, or enter 'exit' to go back to main menu: ")
-            if choice.lower() == 'exit':
-                break
+                continue
 
+            order.add_order_line(product, quantity)
+            print("\nOrder successfully added!")
+            continue
+
+        elif choice == 2:
+            if not orders:
+                print("No orders yet, no orders to remove.\n")
+                continue
+            orderID = input("Enter an Order ID to remove from: ")
+            if orderID in orders:
+                order = orders[orderID]
+            else:
+                order = Order(orderID)
+                orders[orderID] = order
+            try:
+                productID = input("Enter a Product ID to remove from the Order: ")
+                fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+            except ValueError:
+                print("Invalid input, please try again.")
+            remove = order.remove_order_line(fullID)
+            if remove == "success":
+                print("Order Line successfully removed.")
+            else:
+                print("Product is not in this Order.")
+
+        elif choice == 3:
+            if not orders:
+                print("No orders yet, add an order.\n")
+            else:
+                for orderID, order in orders.items():
+                    order.view_order()
+            input("Press any key to continue")
+        
+        elif choice == 4:
+            print("Returning to main menu.")
+            continue
+
+        else:
+            print("Pick a valid choice (1 - 3)")
+    
     if option == 7:
         save_inventory(store.products)
 
     if option == 8:
         print("\nSaving inventory before exit...")
         save_inventory(store.products)
-        print("\nInventory saved successfully.\n")
         print("Thank you for using the Inventory Management System\nProgram Terminated.")
         break

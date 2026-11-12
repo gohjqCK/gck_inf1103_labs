@@ -6,7 +6,7 @@ class Menu:
         print("3. Remove product")
         print("4. Update Stock")
         print("5. Search Product")
-        print("6. Add Order")
+        print("6. Manage Orders")
         print("7. Save inventory")
         print("8. Exit")
         print("--------------------------")
