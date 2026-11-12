@@ -11,23 +11,41 @@ def load_inventory():
         data = json.load(open('inventory.json', 'r+'))
         for item in data:
             if item["TYPE"] == "physical":
-                store.products[item["ID"]] = PhysicalProduct(
-                    item["ID"],
-                    item["NAME"],
-                    item["PRICE"],
-                    item["STOCK"],
-                    item["TYPE"],
-                    item["OTHER"]
-                )
-            else:
-                store.products[item["ID"]] = DigitalProduct(
-                    item["ID"],
-                    item["NAME"],
-                    item["PRICE"],
-                    item["STOCK"],
-                    item["TYPE"],
-                    item["OTHER"]
-            )
+                id = item["ID"]
+                name = item["NAME"]
+                price = item["PRICE"]
+                stock = item["STOCK"]
+                itemType = item["TYPE"]
+                other_info = item["OTHER"]
+                supplier_id = item["SUPPLIERID"]
+                supplier_name = item["SUPPLIERNAME"]
+                supplier_email = item["SUPPLIEREMAIL"]
+
+                if item["TYPE"] == "physical":
+                    store.products[item["ID"]] = PhysicalProduct(
+                        product_id=id,
+                        name=name,
+                        price=price,
+                        stock=stock,
+                        itemType=itemType,
+                        other_info=other_info,
+                        supplier_id=supplier_id,
+                        supplier_name=supplier_name,
+                        supplier_email=supplier_email
+                    )
+                elif item["TYPE"] == "digital":
+                    store.products[item["ID"]] = DigitalProduct(
+                        product_id=id,
+                        name=name,
+                        price=price,
+                        stock=stock,
+                        itemType=itemType,
+                        other_info=other_info,
+                        supplier_id=supplier_id,
+                        supplier_name=supplier_name,
+                        supplier_email=supplier_email
+                    )
+
     except FileNotFoundError:
         print("\nFile does not exist! Generating a new inventory file.\n")
         open('inventory.json', 'w+')
@@ -42,7 +60,10 @@ def save_inventory(inventory):
             "PRICE": p.price,
             "STOCK": p.stock,
             "TYPE": p.itemType,
-            "OTHER": p.other_info
+            "OTHER": p.other_info,
+            "SUPPLIERID": p.supplier.supplier_id,
+            "SUPPLIERNAME": p.supplier.name,
+            "SUPPLIEREMAIL": p.supplier.contact_email
         }
         for p in inventory.values()
     ]
@@ -64,14 +85,14 @@ while True:
         print("----------------------------------------------------")
         Inventory.display_information(store)
         print("----------------------------------------------------\n")
-        shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
-        if shipInfo == "1":
-            for product in store.products.values():
-                if product.get_fulfillment_info() == "physical":
-                    print(f"Product ID: {product.product_id} | Name: {product.name} | Fulfillment Info: {product.get_fulfillment_info()}")
-                    print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
-            print("----------------------------------------------------\n")
-            input("Press any key to continue...")
+        # shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
+        # if shipInfo == "1":
+        #     for product in store.products.values():
+        #         if product.get_fulfillment_info() == "physical":
+        #             print(f"Product ID: {product.product_id} | Name: {product.name} | Fulfillment Info: {product.get_fulfillment_info()}")
+        #             print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+        #     print("----------------------------------------------------\n")
+        #     input("Press any key to continue...")
 
     if option == 2:
         print("\nAdd New Product")
@@ -109,7 +130,6 @@ while True:
                 input("Press any key to continue...")
             except ValueError:
                 print("Invalid stock quantity. Please try again.\n")
-
 
     if option == 5:
         print("\nSearch Product")
