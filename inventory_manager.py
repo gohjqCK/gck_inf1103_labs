@@ -3,6 +3,7 @@ from Modules.DigitalProduct import DigitalProduct
 from Modules.PhysicalProduct import PhysicalProduct
 from Modules.Inventory import Inventory
 from Modules.Menu import Menu
+from Modules.Supplier import Supplier
 
 def load_inventory():
     try:
@@ -11,40 +12,33 @@ def load_inventory():
         data = json.load(open('inventory.json', 'r+'))
         for item in data:
             if item["TYPE"] == "physical":
-                id = item["ID"]
-                name = item["NAME"]
-                price = item["PRICE"]
-                stock = item["STOCK"]
-                itemType = item["TYPE"]
-                other_info = item["OTHER"]
-                supplier_id = item["SUPPLIERID"]
-                supplier_name = item["SUPPLIERNAME"]
-                supplier_email = item["SUPPLIEREMAIL"]
-
-                if item["TYPE"] == "physical":
-                    store.products[item["ID"]] = PhysicalProduct(
-                        product_id=id,
-                        name=name,
-                        price=price,
-                        stock=stock,
-                        itemType=itemType,
-                        other_info=other_info,
-                        supplier_id=supplier_id,
-                        supplier_name=supplier_name,
-                        supplier_email=supplier_email
+                store.products[item["ID"]] = PhysicalProduct(
+                    product_id=item["ID"],
+                    name=item["NAME"],
+                    price=item["PRICE"],
+                    stock=item["STOCK"],
+                    itemType=item["TYPE"],
+                    other_info=item["OTHER"],
+                    supplier=Supplier(
+                        supplier_id=item["SUPPLIERID"],
+                        supplier_name=item["SUPPLIERNAME"],
+                        supplier_email=item["SUPPLIEREMAIL"]
                     )
-                elif item["TYPE"] == "digital":
-                    store.products[item["ID"]] = DigitalProduct(
-                        product_id=id,
-                        name=name,
-                        price=price,
-                        stock=stock,
-                        itemType=itemType,
-                        other_info=other_info,
-                        supplier_id=supplier_id,
-                        supplier_name=supplier_name,
-                        supplier_email=supplier_email
+                )
+            elif item["TYPE"] == "digital":
+                store.products[item["ID"]] = DigitalProduct(
+                    product_id=item["ID"],
+                    name=item["NAME"],
+                    price=item["PRICE"],
+                    stock=item["STOCK"],
+                    itemType=item["TYPE"],
+                    other_info=item["OTHER"],
+                    supplier=Supplier(
+                        supplier_id=item["SUPPLIERID"],
+                        name=item["SUPPLIERNAME"],
+                        contact_email=item["SUPPLIEREMAIL"]
                     )
+                )
 
     except FileNotFoundError:
         print("\nFile does not exist! Generating a new inventory file.\n")

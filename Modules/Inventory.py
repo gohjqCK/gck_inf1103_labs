@@ -42,14 +42,25 @@ class Inventory:
         else:
             return "fail"
 
-    def search_product(self, productID):
-        if productID in self.products:
+    def search_product(self, fullID):
+        if fullID in self.products:
             print("\nProduct Found:")
-            print("-----------------------")
-            print(f"ID: {self.products[productID].product_id} | Name: {self.products[productID].name} | "
-                  f"Price: {self.products[productID].price} | Stock: {self.products[productID].stock}")
-            print("-----------------------\n")
-        elif productID not in self.products:
+            print("==========================")
+            print(f"Product ID: {self.products[fullID].product_id} | Name: {self.products[fullID].name} | "
+                  f"Price: {self.products[fullID].price} | Stock: {self.products[fullID].stock}")
+            print("==========================\n")
+            choice = input("Press 1 to view shipping and supplier information, or any other key to continue: ")
+            if choice == "1":
+                if self.products[fullID].get_fulfillment_info() == "physical":
+                    print(f"\nFulfillment Info: {self.products[fullID].get_fulfillment_info()}")
+                    print(f"Shipping Cost: ${self.products[fullID].calculate_shipping_cost():.2f}")
+                else:
+                    print("This product is digital and does not require shipping.")
+                print(f"Supplier ID: {self.products[fullID].supplier.supplier_id}")
+                print(f"Supplier Name: {self.products[fullID].supplier.name}")
+                print(f"Supplier Email: {self.products[fullID].supplier.contact_email}\n")
+
+        elif fullID not in self.products:
             return "exist"
         else:
             return "fail"
