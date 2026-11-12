@@ -1,39 +1,11 @@
-from Modules.DigitalProduct import DigitalProduct
-from Modules.PhysicalProduct import PhysicalProduct
 from Modules.Product import Product
-from Modules.Supplier import Supplier
 
 class Inventory:
     def __init__(self):
-        self.products: dict[str, Product] = {}
+        self.products: list[Product] = []
 
-    def add_product(self):
-        try:
-            itemID = int(input("Product ID: "))
-            fullID = f"P{itemID:03d}"
-            if fullID in self.products:
-                    return "exist"  
-            itemName = input("Product Name: ")
-            itemPrice = float(input("Price: "))
-            itemStock = int(input("Stock Quantity: "))
-            itemType = input("Product Type (Physical/Digital): ").strip().lower()
-            if itemType == "physical":
-                itemWeight = float(input("Weight in Kgs: "))
-            elif itemType == "digital":
-                itemDownloadSize = float(input("Download Size in MB: "))
-            supplyID = input("Supplier ID: ")
-            supplyName = input("Supplier Name: ")
-            supplyEmail = input("Supplier Contact Email: ")
-            supplier = Supplier(supplyID, supplyName, supplyEmail)
-
-        except ValueError:
-            return "fail"
-        fullPrice = f"${itemPrice:.2f}"  
-        if itemType == "physical":
-            self.products[fullID] = PhysicalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemWeight)
-        elif itemType == "digital":
-            self.products[fullID] = DigitalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemDownloadSize)
-        return "success"
+    def add_product(self, product: Product):
+        self.products[product.product_id] = product
 
     def remove_product(self, productID):
         if productID in self.products:
@@ -67,5 +39,5 @@ class Inventory:
         return None
 
     def display_information(self) -> None:
-        for product in self.products.values():
+        for product in self.products:
             product.display_information()

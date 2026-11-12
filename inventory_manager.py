@@ -13,8 +13,9 @@ def load_inventory():
         print("\ninventory.json found.\nInventory loaded successfully.\n")
         data = json.load(open('inventory.json', 'r+'))
         for item in data:
-            if item["TYPE"] == "physical":
-                store.products[item["ID"]] = PhysicalProduct(
+            itemType = item.get("TYPE")
+            if itemType == "physical":
+                product = PhysicalProduct(
                     product_id=item["ID"],
                     name=item["NAME"],
                     price=item["PRICE"],
@@ -27,8 +28,10 @@ def load_inventory():
                         supplier_email=item["SUPPLIEREMAIL"]
                     )
                 )
-            elif item["TYPE"] == "digital":
-                store.products[item["ID"]] = DigitalProduct(
+                store.products.append(product)
+
+            elif itemType == "digital":
+                product = DigitalProduct(
                     product_id=item["ID"],
                     name=item["NAME"],
                     price=item["PRICE"],
@@ -41,6 +44,7 @@ def load_inventory():
                         contact_email=item["SUPPLIEREMAIL"]
                     )
                 )
+                store.products.append(product)
 
     except FileNotFoundError:
         print("\nFile does not exist! Generating a new inventory file.\n")
@@ -61,7 +65,7 @@ def save_inventory(inventory):
             "SUPPLIERNAME": p.supplier.name,
             "SUPPLIEREMAIL": p.supplier.contact_email
         }
-        for p in inventory.values()
+        for p in inventory
     ]
     with open("inventory.json", "w") as file:
         json.dump(item, file)
@@ -92,15 +96,33 @@ while True:
 
     if option == 2:
         print("\nAdd New Product")
-        newprod = Inventory.add_product(store)
-        if newprod == "fail":
-            print("One or more options invalid. Please try again.")
-        elif newprod == "exist":
-            print("Item ID already exists. Please try again.")
-        elif newprod == "success":
-            print("\nProduct Added Successfully!\n")
-            input("Press any key to continue...")
-
+        try:
+            itemID = int(input("Product ID: "))
+            fullID = f"P{itemID:03d}"
+            if fullID in store.products:
+                input("Item already exists. Please try again...\n")
+                continue
+            itemName = input("Product Name: ")
+            itemPrice = float(input("Price: "))
+            itemStock = int(input("Stock Quantity: "))
+            itemType = input("Product Type (Physical/Digital): ").strip().lower()
+            if itemType == "physical":
+                itemWeight = float(input("Weight in Kgs: "))
+            elif itemType == "digital":
+                itemDownloadSize = float(input("Download Size in MB: "))
+            supplyID = input("Supplier ID: ")
+            supplyName = input("Supplier Name: ")
+            supplyEmail = input("Supplier Contact Email: ")
+            supplier = Supplier(supplyID, supplyName, supplyEmail)
+            fullPrice = f"${itemPrice:.2f}"  
+            if itemType == "physical":
+                PhysicalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemWeight)
+                Inventory.add_product(store, PhysicalProduct)
+            elif itemType == "digital":
+                DigitalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemDownloadSize)
+                Inventory.add_product(store, DigitalProduct)
+        except ValueError:
+                    print("Invalid input, please try again.\n")
     if option == 3:
         print("\nRemove Product")
         productID = input("Enter Product ID: ")
