@@ -4,6 +4,8 @@ from Modules.PhysicalProduct import PhysicalProduct
 from Modules.Inventory import Inventory
 from Modules.Menu import Menu
 from Modules.Supplier import Supplier
+from Modules.Order import Order
+from Modules.Orderline import Orderline
 
 def load_inventory():
     try:
@@ -137,9 +139,27 @@ while True:
             input("Press any key to continue...")
 
     if option == 6:
-        save_inventory(store.products)
+        print("\nAdd Order")
+        print("==================================")
+        while True:
+            orderID = Order(input("\nEnter Order ID: "))
+            productID = input("Enter Product ID: ")
+            quantity = input("Enter Quantity: ")
+            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+            try:
+                quantity = int(quantity)
+                orderID.add_order_line(store.products[fullID], quantity)
+                print("\nOrder successfully added!")
+            except ValueError:
+                print("Invalid input, please try again")
+            choice = input("\nPress any key to add another product, or enter 'exit' to go back to main menu: ")
+            if choice.lower() == 'exit':
+                break
 
     if option == 7:
+        save_inventory(store.products)
+
+    if option == 8:
         print("\nSaving inventory before exit...")
         save_inventory(store.products)
         print("\nInventory saved successfully.\n")

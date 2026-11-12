@@ -1,5 +1,7 @@
+from Modules import Product
+
 class Orderline:
-    def __init__(self, product, quantity):
+    def __init__(self, product: Product, quantity):
         self.product = product
         self.quantity = quantity
 

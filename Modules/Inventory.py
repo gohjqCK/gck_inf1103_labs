@@ -66,6 +66,6 @@ class Inventory:
             return "fail"
         return None
 
-    def display_information(self):
+    def display_information(self) -> None:
         for product in self.products.values():
             product.display_information()
