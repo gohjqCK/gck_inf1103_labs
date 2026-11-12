@@ -1,4 +1,5 @@
 import json
+from Modules.Product import Product
 from Modules.DigitalProduct import DigitalProduct
 from Modules.PhysicalProduct import PhysicalProduct
 from Modules.Inventory import Inventory
@@ -24,8 +25,8 @@ def load_inventory():
                     other_info=item["OTHER"],
                     supplier=Supplier(
                         supplier_id=item["SUPPLIERID"],
-                        supplier_name=item["SUPPLIERNAME"],
-                        supplier_email=item["SUPPLIEREMAIL"]
+                        name=item["SUPPLIERNAME"],
+                        contact_email=item["SUPPLIEREMAIL"]
                     )
                 )
                 store.products.append(product)
@@ -83,7 +84,7 @@ while True:
     if option == 1:
         print("Current Inventory:\n")
         print("----------------------------------------------------")
-        Inventory.display_information(store)
+        store.display_information()
         print("----------------------------------------------------\n")
         # shipInfo = input("Press 1 to view shipping information, or any other key to continue. ")
         # if shipInfo == "1":
@@ -99,7 +100,7 @@ while True:
         try:
             itemID = int(input("Product ID: "))
             fullID = f"P{itemID:03d}"
-            if fullID in store.products:
+            if any(product.product_id == fullID for product in store.products):
                 input("Item already exists. Please try again...\n")
                 continue
             itemName = input("Product Name: ")
@@ -116,18 +117,25 @@ while True:
             supplier = Supplier(supplyID, supplyName, supplyEmail)
             fullPrice = f"${itemPrice:.2f}"  
             if itemType == "physical":
-                PhysicalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemWeight)
-                Inventory.add_product(store, PhysicalProduct)
+                product = PhysicalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemWeight)
+                store.add_product(product)
+                input("\nSuccessfully added product! Press any key to continue...\n")
             elif itemType == "digital":
-                DigitalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemDownloadSize)
-                Inventory.add_product(store, DigitalProduct)
+                product = DigitalProduct(fullID, itemName, fullPrice, itemStock, supplier, itemType, itemDownloadSize)
+                store.add_product(product)
+                input("\nSuccessfully added product! Press any key to continue.\n")
         except ValueError:
                     print("Invalid input, please try again.\n")
+                    
     if option == 3:
         print("\nRemove Product")
-        productID = input("Enter Product ID: ")
-        fullID = f"P{int(productID.upper().replace('P', '')):03d}"
-        remove = Inventory.remove_product(store, fullID)
+        try:
+            itemID = int(input("Enter Product ID: "))
+            fullID = f"P{itemID:03d}"
+        except ValueError:
+            print("Invalid input, please input a valid number")
+            continue
+        remove = store.remove_product(store, fullID)
         if remove == "fail":
             print("Product not found. Please try again.\n")
             input("Press any key to continue...")
@@ -137,40 +145,44 @@ while True:
 
     if option == 4:
         print("\nUpdate Stock")
-        productID = input("Enter Product ID: ")
-        fullID = f"P{int(productID.upper().replace('P', '')):03d}"
-        item = store.search_product(fullID)
-        if item is None:
+        try:
+            productID = int(input("Enter Product ID: "))
+            fullID = f"P{productID:03d}"
+            item = store.search_product(fullID, "upd")
             try:
                 newStock = int(input("Enter new stock quantity: "))
-                store.products[fullID].update_stock(newStock)
+                product.update_stock(newStock)
                 print("\nStock updated successfully!\n")
                 input("Press any key to continue...")
             except ValueError:
                 print("Invalid stock quantity. Please try again.\n")
+        except ValueError:
+            print("Invalid input, please input a valid number")
+            continue
 
     if option == 5:
         print("\nSearch Product")
-        inputID = input("Enter Product ID: ")
-        productID = f"P{int(inputID.upper().replace('P', '')):03d}"
-        search = Inventory.search_product(store, productID)
+        try:
+            inputID = int(input("Enter Product ID: "))
+            fullID = f"P{inputID:03d}"
+        except ValueError:
+            print("Invalid input, please input a valid number\n")
+            continue
+        search = store.search_product(fullID, "search")
         if search == "fail":
-            print("Invalid input. Please try again\n")
-        elif search == "exist":
-            print("Product not found. Please try again\n")
-            input("Press any key to continue...")
+            print("Product not found or Invalid ID. Please try again\n")
 
     if option == 6:
         print("\nAdd Order")
         print("==================================")
         while True:
             orderID = Order(input("\nEnter Order ID: "))
-            productID = input("Enter Product ID: ")
+            productID = int(input("Enter Product ID: "))
             quantity = input("Enter Quantity: ")
-            fullID = f"P{int(productID.upper().replace('P', '')):03d}"
+            fullID = f"P{productID:03d}"
             try:
                 quantity = int(quantity)
-                orderID.add_order_line(store.products[fullID], quantity)
+                orderID.add_order_line(fullID, quantity)
                 print("\nOrder successfully added!")
             except ValueError:
                 print("Invalid input, please try again")

@@ -7,7 +7,7 @@ class DigitalProduct(Product):
         self.itemType = itemType
         self.other_info = other_info
 
-    def display_information(self):
+    def display_information(self) -> None:
         super().display_information()
         print(f" | Type: {self.itemType} | Size: {self.other_info} MB")
 

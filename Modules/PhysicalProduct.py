@@ -8,7 +8,7 @@ class PhysicalProduct(Product, CanBeShipped):
         self.itemType = itemType
         self.other_info = other_info
 
-    def display_information(self):
+    def display_information(self) -> None:
         super().display_information()
         print(f" | Type: {self.itemType} | Weight: {self.other_info} kg")
 

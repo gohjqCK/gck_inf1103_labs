@@ -4,39 +4,45 @@ class Inventory:
     def __init__(self):
         self.products: list[Product] = []
 
-    def add_product(self, product: Product):
-        self.products[product.product_id] = product
+    def add_product(self, product: Product) -> None:
+        self.products.append(product)
 
-    def remove_product(self, productID):
-        if productID in self.products:
-            del self.products[productID]
-            return "success"
-        else:
+    def remove_product(self, fullID : str) -> Product | None:
+        product = self.find_product(fullID)
+        if product is None:
             return "fail"
+        self.products.remove(product)
+        return "success"
+        
 
-    def search_product(self, fullID):
-        if fullID in self.products:
-            print("\nProduct Found:")
-            print("==========================")
-            print(f"Product ID: {self.products[fullID].product_id} | Name: {self.products[fullID].name} | "
-                  f"Price: {self.products[fullID].price} | Stock: {self.products[fullID].stock}")
-            print("==========================\n")
-            choice = input("Press 1 to view shipping and supplier information, or any other key to continue: ")
-            if choice == "1":
-                if self.products[fullID].get_fulfillment_info() == "physical":
-                    print(f"\nFulfillment Info: {self.products[fullID].get_fulfillment_info()}")
-                    print(f"Shipping Cost: ${self.products[fullID].calculate_shipping_cost():.2f}")
-                else:
-                    print("This product is digital and does not require shipping.")
-                print(f"Supplier ID: {self.products[fullID].supplier.supplier_id}")
-                print(f"Supplier Name: {self.products[fullID].supplier.name}")
-                print(f"Supplier Email: {self.products[fullID].supplier.contact_email}\n")
-
-        elif fullID not in self.products:
-            return "exist"
-        else:
-            return "fail"
+    def find_product(self, fullID : str) -> Product | None:
+        for product in self.products:
+            if product.product_id == fullID:
+                return product
         return None
+
+    def search_product(self, fullID, type):
+        product = self.find_product(fullID)
+        if product is None:
+            return "fail"
+
+        print("\n==========================")
+        print("Product Found:")
+        print("==========================")
+        print(f"Product ID: {product.product_id} | Name: {product.name} | "
+                f"Price: {product.price} | Stock: {product.stock}")
+        if type == "search":
+            if product.get_fulfillment_info() == "physical":
+                print("Product requires shipping handler")
+                print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+            else:
+                print("This product is delivered digitally.")
+            print(f"Supplier ID: {product.supplier.supplier_id}")
+            print(f"Supplier Name: {product.supplier.name}")
+            print(f"Supplier Email: {product.supplier.contact_email}")
+            print("==========================\n")
+        return "success"
+        
 
     def display_information(self) -> None:
         for product in self.products:
