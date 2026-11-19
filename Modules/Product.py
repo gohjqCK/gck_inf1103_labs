@@ -7,8 +7,14 @@ class Product(ABC):
             self.price = price
             self.stock = stock
             self.supplier = supplier
+            if self.price <= 0:
+                raise ValueError("Price must be greater than zero.")
+            if self.stock <= 0:
+                raise ValueError("Quantity cannot be negative.")
         
     def update_stock(self, itemStock: int) -> None:
+        if itemStock <= 0:
+             raise ValueError("Quantity cannot be negative.")
         self.stock = itemStock
 
     def display_information(self) -> None:

@@ -6,10 +6,10 @@ from Modules.Supplier import Supplier
 class ProductFactory:
     @staticmethod
     def create(product_type: str, product_id: str, name: str, price: float,
-        stock_quantity: int, supplier: Supplier) -> Product:
+        stock: int, supplier: Supplier, itemType: str, other_info: str) -> Product:
         if product_type == "physical":
-            return PhysicalProduct(product_id, name, price, stock_quantity, supplier)
+            return PhysicalProduct(product_id, name, price, stock, supplier, itemType, other_info)
         elif product_type == "digital":
-            return DigitalProduct(product_id, name, price, stock_quantity, supplier)
+            return DigitalProduct(product_id, name, price, stock, supplier, itemType, other_info)
         else:
             raise ValueError(f"Unknown product type: {product_type}")
